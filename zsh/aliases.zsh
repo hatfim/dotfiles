@@ -1,6 +1,8 @@
 #
 # Aliases
 #
+# Refresh zshrc
+alias rzshrc= 'source ~/.zshrc'
 
 # Enable aliases to be sudo’ed
 #   http://askubuntu.com/questions/22037/aliases-not-available-when-using-sudo
@@ -21,19 +23,39 @@ alias clr='clear'
 # Go to the /home/$USER (~) directory and clears window of your terminal
 alias q="~ && clear"
 
+# Easier navigation: .., ..., ...., ....., ~ and -
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ~="cd ~" # `cd` is probably faster to type though
+alias -- -="cd -"
+
 # Folders Shortcuts
 [ -d ~/Dropbox ]              && alias dr='cd ~/Dropbox'
-[ -d ~/Downloads ]            && alias dl='cd ~/Downloads'
 [ -d ~/Desktop ]              && alias dt='cd ~/Desktop'
-[ -d ~/Projects ]             && alias pj='cd ~/Projects'
-[ -d ~/Projects/_Repos ]      && alias pjr='cd ~/Projects/_Repos'
-[ -d ~/Projects/Repos ]       && alias pjr='cd ~/Projects/Repos'
-[ -d ~/Projects/Forks ]       && alias pjf='cd ~/Projects/Forks'
-[ -d ~/Projects/_Forks ]      && alias pjf='cd ~/Projects/_Forks'
-[ -d ~/Projects/Playground ]  && alias pl='cd ~/Projects/Playground'
-[ -d ~/Projects/_Playground ] && alias pl='cd ~/Projects/_Playground'
-[ -d ~/Projects/Job ]         && alias pjj='cd ~/Projects/Job'
-[ -d ~/Projects/_Job ]        && alias pjj='cd ~/Projects/_Job'
+[ -d ~/Downloads ]            && alias dl='cd ~/Downloads'
+[ -d ~/Localsites ]           && alias dev='cd ~/Localsites'
+[ -d ~/Projects ]             && alias proj='cd ~/Projects'
+[ -d ~/Projects/Repos ]       && alias repo='cd ~/Projects/Repos'
+[ -d ~/Projects/Clones ]      && alias clone='cd ~/Projects/Clones'
+# [ -d ~/Projects/Forks ]       && alias pjf='cd ~/Projects/Forks'
+# [ -d ~/Projects/_Forks ]      && alias pjf='cd ~/Projects/_Forks'
+# [ -d ~/Projects/Playground ]  && alias pl='cd ~/Projects/Playground'
+# [ -d ~/Projects/_Playground ] && alias pl='cd ~/Projects/_Playground'
+# [ -d ~/Projects/Job ]         && alias pjj='cd ~/Projects/Job'
+# [ -d ~/Projects/_Job ]        && alias pjj='cd ~/Projects/_Job'
+
+# Edit Shortcuts
+alias edot='subl ~/Dotfiles'
+alias evhost='subl ~/Localsites/httpd-vhosts.conf'
+alias ehttpd='subl $(brew --prefix)/etc/apache2/2.4'
+alias ephp='subl $(brew --prefix)/etc/php/5.6'
+
+# Command Server Shortcust
+alias rhttpd= 'brew services restart httpd24'
+alias rphp= 'brew services restart php56'
+alias rmyql= 'brew services restart mysql'
 
 # Commands Shortcuts
 alias e="$EDITOR"
@@ -59,22 +81,6 @@ fi
 # Color conversion
 alias hex2hsl='color.js $1 $2'
 alias hex2rgb='color.js --rgb $1 $2'
-
-# Virtualenv
-alias venv='test -d venv && export VIRTUAL_ENV_DISABLE_PROMPT=1 && source ./venv/bin/activate || echo "No Virtualenv in the current folder."'
-alias venv-init3='test -d venv && echo "Virtualenv already exists." || virtualenv --no-site-packages -p python3 venv; venv'
-alias venv-init2='test -d venv && echo "Virtualenv already exists." || virtualenv --no-site-packages venv; venv'
-alias venv-init='venv-init3'
-alias venv-stop='deactivate'
-
-# Django
-alias djm="python manage.py"
-alias djs="python manage.py runserver"
-alias djm3="python3 manage.py"
-alias djs3="python3 manage.py runserver"
-
-# Get Ubuntu Updates, and update npm and its installed packages
-alias update="source $DOTFILES/setup/update.bash"
 
 # Add an "alert" alias for long running commands.
 # Use like so:

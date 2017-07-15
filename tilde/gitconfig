@@ -1,3 +1,7 @@
+[user]
+  name = Hatfim
+  email = hatfim.ydniw@gmail.com
+  signingkey = 5A97121935DD207A
 [color]
   ui = auto
 
@@ -77,15 +81,8 @@
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
+[commit]
+  template = /Users/hatfim/.git-commit-template
 
-# Include local settings from .gitlocal
-# Requires Git 1.7.10
-# Setup:
-#   git config -f ~/.gitlocal user.email "your@email.com"
-#   git config -f ~/.gitlocal user.name "Name Lastname"
-# Example .gitlocal:
-# [user]
-#   name = Denys Dovhan
-#   email = email@denysdovhan.com
 [include]
   path = ~/.gitlocal

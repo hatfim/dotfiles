@@ -33,7 +33,7 @@ fi
 # NVM
 if [ -d $HOME/.nvm ]; then
   export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+  . "$(brew --prefix nvm)/nvm.sh"
 fi
 
 # Default pager
@@ -138,6 +138,8 @@ if ! zgen saved; then
   zgen oh-my-zsh plugins/vagrant
   zgen oh-my-zsh plugins/yarn
   zgen oh-my-zsh plugins/heroku
+  zgen oh-my-zsh plugins/sublime
+
   # TODO: Use extract plugin
 
   # Load external plugins
@@ -161,6 +163,8 @@ if ! zgen saved; then
   # save all to init script
   zgen save
 fi
+
+source $DOTFILES/zsh/themes.zsh
 
 # Load extra (private) settings
 [ -f ~/.zshlocal ] && source ~/.zshlocal
