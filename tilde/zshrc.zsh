@@ -4,6 +4,7 @@
 
 # Export path to root of dotfiles repo
 export DOTFILES=${DOTFILES:-"$HOME/Dotfiles"}
+export PATH="/usr/local/sbin:$PATH"
 
 # Locale
 export LC_ALL=en_US.UTF-8
@@ -35,6 +36,8 @@ if [ -d $HOME/.nvm ]; then
   export NVM_DIR="$HOME/.nvm"
   . "$(brew --prefix nvm)/nvm.sh"
 fi
+
+
 
 # Default pager
 export PAGER='less'

@@ -1,5 +1,10 @@
+// Future versions of Hyper may add additional config options,
+// which will not automatically be merged into this file.
+// See https://hyper.is#cfg for all currently supported options.
+
 module.exports = {
   config: {
+
     // default font size in pixels for all tabs
     fontSize: 12,
 
@@ -58,31 +63,13 @@ module.exports = {
 
     // for advanced config flags please refer to https://hyper.is/#cfg
   },
-  MaterialTheme: {
-
-    // Set the theme variant,
-    // OPTIONS: 'Darker', 'Palenight', ''
-    theme: 'Palenight',
-
-    // Set the rgba() app background opacity, useful when enableVibrance is true
-    // OPTIONS: From 0.1 to 1
-    backgroundOpacity: '1',
-
-    // Set the accent color for the current active tab
-    accentColor: '#64FFDA',
-
-    // Mac Only. Need restart. Enable the vibrance and blurred background
-    // OPTIONS: 'dark', 'ultra-dark', 'bright'
-    // NOTE: The backgroundOpacity should be between 0.1 and 0.9 to see the effect.
-    vibrancy: 'bright'
-  },
   // a list of plugins to fetch and install from npm
   // format: [@org/]project[#version]
   // examples:
   //   `hyperpower`
   //   `@company/project`
   //   `project#1.0.1`
-  plugins: ["hyperterm-material"],
+  plugins: ["hyper-font-smoothing", "hyper-dark-scrollbar"],
 
   // in development, you can create a directory under
   // `~/.hyper_plugins/local/` and include it here
