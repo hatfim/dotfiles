@@ -1,0 +1,18 @@
+# Backup folder
+backup
+
+# Custom files (*sh includes sh, bash, zsh)
+custom/**/*.*sh
+
+# Home Configs
+home/.config/*
+!home/.config/sheldon
+!home/.config/gh/config.yml
+
+# Environment configuration (contains sensitive data)
+.env
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride

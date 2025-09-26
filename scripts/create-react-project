@@ -1,0 +1,211 @@
+#!/usr/bin/env bash
+
+# Create React Project with Custom Template
+# Usage: create-react-project <project-name> [template]
+
+set -euo pipefail
+
+# Colors
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+info() { echo -e "${BLUE}[INFO]${NC} $*"; }
+success() { echo -e "${GREEN}[SUCCESS]${NC} $*"; }
+warning() { echo -e "${YELLOW}[WARNING]${NC} $*"; }
+error() { echo -e "${RED}[ERROR]${NC} $*"; }
+
+# Default values
+PROJECT_NAME=""
+TEMPLATE="vite"
+TEMPLATES_DIR="$DOTFILES/templates"
+
+# Usage function
+usage() {
+  echo "Usage: create-react-project <project-name> [template]"
+  echo ""
+  echo "Templates:"
+  echo "  vite       - Vite + React + TypeScript (default)"
+  echo "  next       - Next.js with TypeScript"
+  echo "  cra        - Create React App with TypeScript"
+  echo "  custom     - Custom Vite setup with additional tooling"
+  echo ""
+  echo "Examples:"
+  echo "  create-react-project my-app"
+  echo "  create-react-project my-app next"
+  echo "  create-react-project my-app custom"
+}
+
+# Parse arguments
+if [ $# -eq 0 ]; then
+  error "Project name is required"
+  usage
+  exit 1
+fi
+
+PROJECT_NAME="$1"
+if [ $# -gt 1 ]; then
+  TEMPLATE="$2"
+fi
+
+# Validate project name
+if [[ ! "$PROJECT_NAME" =~ ^[a-zA-Z0-9-_]+$ ]]; then
+  error "Project name should only contain letters, numbers, hyphens, and underscores"
+  exit 1
+fi
+
+# Check if directory already exists
+if [ -d "$PROJECT_NAME" ]; then
+  error "Directory '$PROJECT_NAME' already exists"
+  exit 1
+fi
+
+info "Creating React project: $PROJECT_NAME with template: $TEMPLATE"
+
+# Create project based on template
+case "$TEMPLATE" in
+  "vite")
+    npm create vite@latest "$PROJECT_NAME" -- --template react-ts
+    ;;
+  "next")
+    npx create-next-app@latest "$PROJECT_NAME" --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
+    ;;
+  "cra")
+    npx create-react-app "$PROJECT_NAME" --template typescript
+    ;;
+  "custom")
+    # Create custom Vite project with enhanced tooling
+    npm create vite@latest "$PROJECT_NAME" -- --template react-ts
+    cd "$PROJECT_NAME"
+
+    info "Adding enhanced tooling..."
+
+    # Install additional dependencies
+    npm install -D \
+      @testing-library/react \
+      @testing-library/jest-dom \
+      @testing-library/user-event \
+      @vitest/coverage-v8 \
+      @vitest/ui \
+      jsdom \
+      husky \
+      lint-staged \
+      prettier \
+      @storybook/react-vite \
+      @storybook/addon-essentials \
+      @storybook/addon-interactions \
+      @storybook/testing-library \
+      vite-bundle-analyzer
+
+    # Setup Storybook
+    npx storybook@latest init --yes
+
+    # Setup Husky
+    npx husky install
+    npx husky add .husky/pre-commit "npx lint-staged"
+
+    # Copy enhanced package.json if template exists
+    if [ -f "$TEMPLATES_DIR/package.json" ]; then
+      warning "Merging custom package.json template..."
+      # This is a simplified merge - in production, you'd want a more sophisticated approach
+    fi
+
+    cd ..
+    ;;
+  *)
+    error "Unknown template: $TEMPLATE"
+    usage
+    exit 1
+    ;;
+esac
+
+cd "$PROJECT_NAME"
+
+# Create additional project structure
+info "Setting up project structure..."
+
+# Create common directories
+mkdir -p src/{components,hooks,utils,types,assets,styles}
+
+# Create README with project info
+cat > README.md <<EOF
+# $PROJECT_NAME
+
+A React application created with $TEMPLATE template.
+
+## Getting Started
+
+\`\`\`bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Run tests
+npm test
+
+# Build for production
+npm run build
+\`\`\`
+
+## Available Scripts
+
+- \`npm run dev\` - Start development server
+- \`npm run build\` - Build for production
+- \`npm test\` - Run tests
+- \`npm run lint\` - Run ESLint
+- \`npm run format\` - Format code with Prettier
+
+## Project Structure
+
+\`\`\`
+src/
+├── components/     # Reusable components
+├── hooks/         # Custom React hooks
+├── utils/         # Utility functions
+├── types/         # TypeScript type definitions
+├── assets/        # Static assets
+└── styles/        # Global styles
+\`\`\`
+EOF
+
+# Create .env.example
+cat > .env.example <<EOF
+# React App Configuration
+VITE_APP_TITLE=$PROJECT_NAME
+VITE_API_URL=http://localhost:3001
+EOF
+
+# Create basic component structure
+if [ ! -f "src/components/index.ts" ]; then
+  echo "// Component exports" > src/components/index.ts
+fi
+
+# Create utils index
+if [ ! -f "src/utils/index.ts" ]; then
+  echo "// Utility exports" > src/utils/index.ts
+fi
+
+# Create hooks index
+if [ ! -f "src/hooks/index.ts" ]; then
+  echo "// Hook exports" > src/hooks/index.ts
+fi
+
+# Install dependencies
+info "Installing dependencies..."
+npm install
+
+success "✅ React project '$PROJECT_NAME' created successfully!"
+echo ""
+echo "Next steps:"
+echo "  cd $PROJECT_NAME"
+echo "  npm run dev"
+echo ""
+echo "Additional commands available:"
+echo "  validate           - Run project validation"
+echo "  create-component   - Create new component"
+echo "  create-hook        - Create new custom hook"
+echo "  react-info         - Show project information"

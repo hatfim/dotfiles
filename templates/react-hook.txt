@@ -1,0 +1,23 @@
+import { useState, useEffect } from 'react';
+
+interface ${HOOK_NAME}Options {
+  // Add your options here
+}
+
+interface ${HOOK_NAME}Return {
+  // Add your return type here
+}
+
+const ${HOOK_NAME} = (options?: ${HOOK_NAME}Options): ${HOOK_NAME}Return => {
+  const [state, setState] = useState();
+
+  useEffect(() => {
+    // Add your effect logic here
+  }, []);
+
+  return {
+    // Return your hook values/functions
+  };
+};
+
+export default ${HOOK_NAME};

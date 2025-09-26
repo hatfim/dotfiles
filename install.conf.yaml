@@ -1,0 +1,44 @@
+- defaults:
+    shell:
+      stdout: true
+      stderr: true
+
+- clean: ['~']
+
+- link:
+    ~/:
+      glob: true
+      path: home/.*
+      create: true
+      relink: true
+      force: true
+
+- create:
+    - ~/.config
+
+- shell:
+    - description: Running validation checks
+      command: ./scripts/validate
+
+    - description: Installing submodules
+      command: git submodule update --init --recursive
+
+    - description: Scaffolding Project folders
+      command: ./scripts/projects
+
+    - description: Installing sheldon
+      command: ./scripts/sheldon
+
+    - description: Installing React development tools
+      command: ./scripts/npm-globals
+
+    - description: Installing macOS configuration (requires sudo)
+      command: |
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+          ./scripts/macos
+        else
+          echo "Skipping macOS configuration on non-macOS system"
+        fi
+
+    - description: Setup complete - restart terminal to apply changes
+      command: echo "✅ Dotfiles installation complete! Restart your terminal or run 'exec zsh' to apply changes."

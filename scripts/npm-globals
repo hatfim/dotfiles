@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+# Global npm packages for React development
+# Run this script to install essential React development tools globally
+
+set -euo pipefail
+
+# Colors for output
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+info() { echo -e "${BLUE}[INFO]${NC} $*"; }
+success() { echo -e "${GREEN}[SUCCESS]${NC} $*"; }
+
+info "Installing global npm packages for React development..."
+
+# Core React development tools
+packages=(
+  # Create React apps and templates
+  "create-react-app"
+  "create-next-app"
+  "create-vite"
+
+  # Build and bundling tools
+  "webpack-cli"
+  "vite"
+  "@vitejs/create-app"
+
+  # Development servers and tools
+  "serve" # Static file server
+  "http-server" # Simple HTTP server
+  "live-server" # Development server with live reload
+
+  # Testing tools
+  "@playwright/test" # End-to-end testing
+
+  # Code quality tools
+  "eslint"
+  "prettier"
+  "typescript"
+  "tsx" # TypeScript execution engine
+
+  # React specific linting
+  "eslint-plugin-react"
+  "eslint-plugin-react-hooks"
+  "@typescript-eslint/eslint-plugin"
+  "@typescript-eslint/parser"
+
+  # Bundle analysis and performance
+  "webpack-bundle-analyzer"
+  "bundlephobia-cli" # Check bundle sizes
+  "size-limit" # Performance budget
+
+  # Utility tools
+  "npm-check-updates" # Update package.json dependencies
+  "npm-quick-run" # Quick npm script runner (nr)
+  "depcheck" # Find unused dependencies
+  "madge" # Dependency graph analysis
+
+  # Documentation tools
+  "@storybook/cli" # Storybook for component development
+
+  # Development utilities
+  "concurrently" # Run multiple commands
+  "cross-env" # Cross-platform environment variables
+  "rimraf" # Cross-platform rm -rf
+  "cpx" # Cross-platform file copying
+
+  # Git hooks and commit tools
+  "husky" # Git hooks
+  "lint-staged" # Run linters on staged files
+  "commitizen" # Conventional commits
+  "cz-conventional-changelog"
+
+  # Package management
+  "yarn" # Alternative package manager (if not using homebrew version)
+  "pnpm" # Fast, disk space efficient package manager
+)
+
+info "Installing ${#packages[@]} packages..."
+
+# Install packages
+npm install -g "${packages[@]}"
+
+success "All global npm packages installed successfully!"
+
+# Setup commitizen
+info "Configuring commitizen for conventional commits..."
+echo '{ "path": "cz-conventional-changelog" }' > ~/.czrc
+
+success "React development environment setup complete!"
+echo
+echo "Available global commands:"
+echo "  - create-react-app, create-next-app, create-vite"
+echo "  - serve, http-server, live-server"
+echo "  - eslint, prettier, typescript, tsx"
+echo "  - webpack-bundle-analyzer, bundlephobia, size-limit"
+echo "  - nr (npm-quick-run), ncu (npm-check-updates)"
+echo "  - storybook, playwright"
+echo "  - git cz (commitizen)"
