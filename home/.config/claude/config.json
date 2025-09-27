@@ -1,0 +1,31 @@
+{
+  "local_package_path": "~/.claude/local",
+  "plugins_path": "~/.claude/plugins",
+  "agents_path": "~/.claude/agents",
+  "shell_snapshots_path": "~/.claude/shell-snapshots",
+  "projects_path": "~/.claude/projects",
+  "default_agent": "general-purpose",
+  "auto_save_snapshots": true,
+  "max_snapshots": 50,
+  "preferred_editors": ["code", "vim"],
+  "ai_features": {
+    "function_calling": true,
+    "hosted_code_interpreter": true,
+    "hosted_file_search": true,
+    "hosted_web_search": true,
+    "streaming_responses": true,
+    "vector_store": true
+  },
+  "ai_model_config": {
+    "model": "claude-3-5-sonnet-20241022",
+    "max_tokens": 1000000,
+    "response_max_tokens": 32768,
+    "temperature": 0.7
+  },
+  "development": {
+    "react_templates": "vite",
+    "project_organization": "~/Dev",
+    "auto_install_deps": true,
+    "prefer_typescript": true
+  }
+}

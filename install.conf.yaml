@@ -55,5 +55,8 @@
           echo "Skipping iTerm2 setup on non-macOS system"
         fi
 
+    - description: Setting up Claude AI development environment
+      command: ./scripts/setup-claude
+
     - description: Setup complete - restart terminal to apply changes
       command: echo "✅ Dotfiles installation complete! Restart your terminal or run 'exec zsh' to apply changes."

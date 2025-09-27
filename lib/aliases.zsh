@@ -56,6 +56,7 @@ alias git-commit-interactive="$DOTFILES/scripts/git-commit-interactive"
 alias setup-git-hooks="$DOTFILES/scripts/setup-git-hooks"
 alias export-iterm2-config="$DOTFILES/scripts/export-iterm2-config"
 alias setup-iterm2="$DOTFILES/scripts/setup-iterm2"
+alias setup-claude="$DOTFILES/scripts/setup-claude"
 
 # Quick jump to dotfiles
 alias dotfiles="code $DOTFILES"

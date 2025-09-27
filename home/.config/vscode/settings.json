@@ -189,5 +189,25 @@
   ],
 
   // Commitlint Extension
-  "commitlint.configPath": "~/.config/commitlint/commitlint.config.js"
+  "commitlint.configPath": "~/.config/commitlint/commitlint.config.js",
+
+  // Claude & AI Integration
+  "claude.apiKey": "",
+  "claude.model": "claude-3-5-sonnet-20241022",
+  "claude.maxTokens": 4096,
+  "claude.enableLogging": false,
+  "claude.autoSuggest": true,
+
+  // GitHub Copilot
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": false,
+    "plaintext": false,
+    "markdown": true
+  },
+  "github.copilot.editor.enableAutoCompletions": true,
+
+  // Continue (Local AI)
+  "continue.enableTabAutocomplete": true,
+  "continue.telemetryEnabled": false
 }

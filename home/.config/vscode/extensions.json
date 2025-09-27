@@ -51,6 +51,12 @@
     "ms-vscode.vscode-json",
     "redhat.vscode-yaml",
     "ms-vscode.hexeditor",
-    "aaron-bond.better-comments"
+    "aaron-bond.better-comments",
+
+    // AI & Claude Integration
+    "anthropic.claude-dev",
+    "continue.continue",
+    "github.copilot",
+    "github.copilot-chat"
   ]
 }

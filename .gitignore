@@ -11,6 +11,7 @@ home/.config/*
 !home/.config/iterm2
 !home/.config/vscode
 !home/.config/commitlint
+!home/.config/claude
 
 # Environment configuration (contains sensitive data)
 .env
