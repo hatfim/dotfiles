@@ -1,0 +1,56 @@
+{
+  "recommendations": [
+    // React & TypeScript
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-json",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+
+    // React Development
+    "dsznajder.es7-react-js-snippets",
+    "formulahendry.auto-rename-tag",
+    "formulahendry.auto-close-tag",
+    "christian-kohler.path-intellisense",
+    "christian-kohler.npm-intellisense",
+
+    // Testing
+    "orta.vscode-jest",
+    "ms-playwright.playwright",
+    "hbenl.vscode-test-explorer",
+
+    // Git & Version Control
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+    "github.vscode-pull-request-github",
+    "vivaxy.vscode-conventional-commits",
+    "joshbolduc.commitlint",
+
+    // Productivity & UI
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "formulahendry.code-runner",
+    "ritwickdey.liveserver",
+    "ms-vscode-remote.remote-containers",
+
+    // Code Quality & Formatting
+    "streetsidesoftware.code-spell-checker",
+    "shardulm94.trailing-spaces",
+    "editorconfig.editorconfig",
+
+    // Bundle Analysis & Performance
+    "ms-vscode.vscode-webpack-analyzer",
+    "wix.vscode-import-cost",
+
+    // Styling & CSS
+    "stylelint.vscode-stylelint",
+    "ms-vscode.vscode-css-peek",
+    "zignd.html-css-class-completion",
+
+    // Utilities
+    "ms-vscode.vscode-json",
+    "redhat.vscode-yaml",
+    "ms-vscode.hexeditor",
+    "aaron-bond.better-comments"
+  ]
+}

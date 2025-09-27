@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+
+# Export iTerm2 Configuration Script
+# Exports current iTerm2 settings to dotfiles
+
+set -euo pipefail
+
+# Colors
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+info() { echo -e "${BLUE}[INFO]${NC} $*"; }
+success() { echo -e "${GREEN}[SUCCESS]${NC} $*"; }
+warning() { echo -e "${YELLOW}[WARNING]${NC} $*"; }
+error() { echo -e "${RED}[ERROR]${NC} $*"; }
+
+# Configuration paths
+ITERM_PLIST="$HOME/Library/Preferences/com.googlecode.iterm2.plist"
+DOTFILES_ITERM_DIR="$DOTFILES/home/.config/iterm2"
+EXPORTED_PLIST="$DOTFILES_ITERM_DIR/com.googlecode.iterm2.plist"
+
+# Check if iTerm2 preferences exist
+check_iterm_config() {
+  if [ ! -f "$ITERM_PLIST" ]; then
+    error "iTerm2 preferences not found at $ITERM_PLIST"
+    error "Make sure iTerm2 is installed and configured"
+    exit 1
+  fi
+
+  info "Found iTerm2 preferences at $ITERM_PLIST"
+}
+
+# Create directory structure
+setup_directories() {
+  mkdir -p "$DOTFILES_ITERM_DIR"
+  info "Created iTerm2 config directory: $DOTFILES_ITERM_DIR"
+}
+
+# Export iTerm2 preferences
+export_preferences() {
+  info "Exporting iTerm2 preferences..."
+
+  # Copy the plist file
+  cp "$ITERM_PLIST" "$EXPORTED_PLIST"
+
+  # Also export as human-readable XML
+  plutil -convert xml1 "$EXPORTED_PLIST"
+
+  success "Exported iTerm2 preferences to $EXPORTED_PLIST"
+}
+
+# Extract key settings for documentation
+extract_key_settings() {
+  info "Extracting key iTerm2 settings..."
+
+  local settings_file="$DOTFILES_ITERM_DIR/settings-summary.md"
+
+  cat > "$settings_file" <<EOF
+# iTerm2 Configuration Summary
+
+This file contains a summary of the key iTerm2 settings exported from your configuration.
+
+## Key Settings
+
+$(defaults read com.googlecode.iterm2 2>/dev/null | grep -E "(Font|Theme|Color|Window|Tab|Profile)" | head -20 || echo "Could not extract detailed settings")
+
+## Font Configuration
+
+$(defaults read com.googlecode.iterm2 2>/dev/null | grep -A5 -B5 "Font" | head -10 || echo "Font settings not found")
+
+## Color Scheme
+
+$(defaults read com.googlecode.iterm2 2>/dev/null | grep -A10 "Custom Color Presets" | head -15 || echo "Color presets not found")
+
+## Export Information
+
+- Exported on: $(date)
+- iTerm2 version: $(defaults read /Applications/iTerm.app/Contents/Info.plist CFBundleShortVersionString 2>/dev/null || echo "Unknown")
+- Source file: $ITERM_PLIST
+- Machine: $(hostname)
+
+## Usage
+
+To restore these settings on a new machine:
+1. Close iTerm2 completely
+2. Run: \`cp ~/.dotfiles/home/.config/iterm2/com.googlecode.iterm2.plist ~/Library/Preferences/\`
+3. Or use the setup script: \`setup-iterm2\`
+4. Restart iTerm2
+
+EOF
+
+  success "Created settings summary at $settings_file"
+}
+
+# Check for common customizations
+analyze_config() {
+  info "Analyzing iTerm2 configuration..."
+
+  echo
+  echo "🎨 Configuration Analysis:"
+  echo "=========================="
+
+  # Check for custom profiles
+  local profiles_count=$(defaults read com.googlecode.iterm2 2>/dev/null | grep -c "Guid" || echo "0")
+  echo "• Profiles found: $profiles_count"
+
+  # Check for custom color schemes
+  local color_schemes=$(defaults read com.googlecode.iterm2 2>/dev/null | grep -c "Custom Color Presets" || echo "0")
+  echo "• Custom color schemes: $color_schemes"
+
+  # Check for key mappings
+  local key_mappings=$(defaults read com.googlecode.iterm2 2>/dev/null | grep -c "Key Mappings" || echo "0")
+  echo "• Custom key mappings: $key_mappings"
+
+  # Check font settings
+  local font_name=$(defaults read com.googlecode.iterm2 2>/dev/null | grep -A2 "Normal Font" | grep "Font Name" | cut -d'"' -f2 || echo "Default")
+  echo "• Font: $font_name"
+
+  # Check window settings
+  local transparency=$(defaults read com.googlecode.iterm2 2>/dev/null | grep "Transparency" | head -1 | cut -d'=' -f2 | tr -d ' ;' || echo "Not set")
+  echo "• Window transparency: $transparency"
+}
+
+# Main export function
+main() {
+  echo "🖥️  iTerm2 Configuration Export"
+  echo "=============================="
+
+  check_iterm_config
+  setup_directories
+  export_preferences
+  extract_key_settings
+  analyze_config
+
+  echo
+  success "✅ iTerm2 configuration exported successfully!"
+  echo
+  echo "📂 Files created:"
+  echo "  • $EXPORTED_PLIST"
+  echo "  • $DOTFILES_ITERM_DIR/settings-summary.md"
+  echo
+  echo "🔧 Next steps:"
+  echo "  • Review the exported settings"
+  echo "  • Commit changes to your dotfiles"
+  echo "  • Use 'setup-iterm2' to restore on other machines"
+}
+
+# Run if script is executed directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi

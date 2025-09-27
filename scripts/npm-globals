@@ -72,6 +72,8 @@ packages=(
   "lint-staged" # Run linters on staged files
   "commitizen" # Conventional commits
   "cz-conventional-changelog"
+  "@commitlint/cli" # Commitlint CLI
+  "@commitlint/config-conventional" # Conventional commit rules
 
   # Package management
   "yarn" # Alternative package manager (if not using homebrew version)

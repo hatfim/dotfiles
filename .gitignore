@@ -8,6 +8,9 @@ custom/**/*.*sh
 home/.config/*
 !home/.config/sheldon
 !home/.config/gh/config.yml
+!home/.config/iterm2
+!home/.config/vscode
+!home/.config/commitlint
 
 # Environment configuration (contains sensitive data)
 .env
@@ -16,3 +19,6 @@ home/.config/*
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# iTerm2 backups (keep main config, ignore backups)
+home/.config/iterm2/*.backup.*

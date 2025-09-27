@@ -13,6 +13,13 @@
       relink: true
       force: true
 
+    # iTerm2 configuration
+    ~/Library/Preferences/com.googlecode.iterm2.plist:
+      path: home/.config/iterm2/com.googlecode.iterm2.plist
+      create: true
+      relink: true
+      force: true
+
 - create:
     - ~/.config
 
@@ -38,6 +45,14 @@
           ./scripts/macos
         else
           echo "Skipping macOS configuration on non-macOS system"
+        fi
+
+    - description: Setting up iTerm2 configuration
+      command: |
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+          ./scripts/setup-iterm2
+        else
+          echo "Skipping iTerm2 setup on non-macOS system"
         fi
 
     - description: Setup complete - restart terminal to apply changes

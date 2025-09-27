@@ -52,6 +52,10 @@ alias validate="$DOTFILES/scripts/validate"
 alias npm-globals="$DOTFILES/scripts/npm-globals"
 alias create-react-project="$DOTFILES/scripts/create-react-project"
 alias brew-maintenance="$DOTFILES/scripts/brew-maintenance"
+alias git-commit-interactive="$DOTFILES/scripts/git-commit-interactive"
+alias setup-git-hooks="$DOTFILES/scripts/setup-git-hooks"
+alias export-iterm2-config="$DOTFILES/scripts/export-iterm2-config"
+alias setup-iterm2="$DOTFILES/scripts/setup-iterm2"
 
 # Quick jump to dotfiles
 alias dotfiles="code $DOTFILES"

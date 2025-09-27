@@ -1,0 +1,260 @@
+#!/usr/bin/env bash
+
+# Setup iTerm2 Configuration Script
+# Installs iTerm2 and restores configuration from dotfiles
+
+set -euo pipefail
+
+# Colors
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+info() { echo -e "${BLUE}[INFO]${NC} $*"; }
+success() { echo -e "${GREEN}[SUCCESS]${NC} $*"; }
+warning() { echo -e "${YELLOW}[WARNING]${NC} $*"; }
+error() { echo -e "${RED}[ERROR]${NC} $*"; }
+
+# Configuration paths
+DOTFILES_ITERM_CONFIG="$DOTFILES/home/.config/iterm2/com.googlecode.iterm2.plist"
+ITERM_PLIST="$HOME/Library/Preferences/com.googlecode.iterm2.plist"
+ITERM_APP="/Applications/iTerm.app"
+
+# Check if running on macOS
+check_macos() {
+  if [[ "$OSTYPE" != "darwin"* ]]; then
+    error "This script is only for macOS"
+    exit 1
+  fi
+}
+
+# Install iTerm2 if not present
+install_iterm2() {
+  if [ ! -d "$ITERM_APP" ]; then
+    info "iTerm2 not found. Installing via Homebrew..."
+
+    if command -v brew >/dev/null 2>&1; then
+      brew install --cask iterm2
+      success "iTerm2 installed successfully"
+    else
+      error "Homebrew not found. Please install iTerm2 manually from https://iterm2.com/"
+      exit 1
+    fi
+  else
+    success "iTerm2 already installed"
+  fi
+}
+
+# Check if iTerm2 is running
+check_iterm_running() {
+  if pgrep -f "iTerm" > /dev/null; then
+    warning "iTerm2 is currently running"
+    echo "To apply configuration changes, iTerm2 needs to be closed."
+    read -p "Close iTerm2 now? (y/N): " close_iterm
+
+    if [[ "$close_iterm" =~ ^[Yy]$ ]]; then
+      info "Closing iTerm2..."
+      osascript -e 'tell application "iTerm2" to quit'
+      sleep 2
+      success "iTerm2 closed"
+    else
+      warning "Configuration will be applied, but you'll need to restart iTerm2 to see changes"
+    fi
+  fi
+}
+
+# Backup existing configuration
+backup_existing_config() {
+  if [ -f "$ITERM_PLIST" ]; then
+    local backup_file="$ITERM_PLIST.backup.$(date +%Y%m%d_%H%M%S)"
+    info "Backing up existing iTerm2 configuration to $backup_file"
+    cp "$ITERM_PLIST" "$backup_file"
+    success "Backup created"
+  fi
+}
+
+# Restore configuration from dotfiles
+restore_configuration() {
+  if [ ! -f "$DOTFILES_ITERM_CONFIG" ]; then
+    error "iTerm2 configuration not found in dotfiles: $DOTFILES_ITERM_CONFIG"
+    error "Run 'export-iterm2-config' first to export your configuration"
+    exit 1
+  fi
+
+  info "Restoring iTerm2 configuration from dotfiles..."
+
+  # Ensure the preferences directory exists
+  mkdir -p "$(dirname "$ITERM_PLIST")"
+
+  # Copy configuration
+  cp "$DOTFILES_ITERM_CONFIG" "$ITERM_PLIST"
+
+  # Set correct permissions
+  chmod 600 "$ITERM_PLIST"
+
+  success "iTerm2 configuration restored"
+}
+
+# Configure iTerm2 to load preferences from custom location (alternative method)
+configure_dynamic_profiles() {
+  local dynamic_profiles_dir="$HOME/Library/Application Support/iTerm2/DynamicProfiles"
+
+  if [ ! -d "$dynamic_profiles_dir" ]; then
+    info "Setting up iTerm2 Dynamic Profiles..."
+    mkdir -p "$dynamic_profiles_dir"
+
+    # Create a dynamic profile from our configuration
+    cat > "$dynamic_profiles_dir/dotfiles.json" <<EOF
+{
+  "Profiles": [
+    {
+      "Name": "Dotfiles Default",
+      "Guid": "dotfiles-default-profile",
+      "Command": "",
+      "Working Directory": "~",
+      "Custom Command": "No",
+      "Badge Text": "",
+      "Use Custom Window Title": false,
+      "Custom Window Title": "",
+      "Terminal Type": "xterm-256color",
+      "Environment": {},
+      "Silence Bell": true,
+      "Visual Bell": true,
+      "Blinking Cursor": false,
+      "Cursor Type": 0,
+      "Right Option Key Sends": 0,
+      "Character Encoding": 4,
+      "Mouse Reporting": true,
+      "Scrollback Lines": 10000,
+      "Unlimited Scrollback": false,
+      "Description": "Profile managed by dotfiles configuration"
+    }
+  ]
+}
+EOF
+
+    success "Dynamic Profiles configured"
+  fi
+}
+
+# Install iTerm2 shell integration
+install_shell_integration() {
+  local shell_integration_script="$HOME/.iterm2_shell_integration.zsh"
+
+  if [ ! -f "$shell_integration_script" ]; then
+    info "Installing iTerm2 shell integration..."
+    curl -L https://iterm2.com/shell_integration/zsh -o "$shell_integration_script"
+    success "Shell integration installed"
+
+    # Add to zshrc if not already present
+    if ! grep -q "iterm2_shell_integration" "$HOME/.zshrc" 2>/dev/null; then
+      echo "" >> "$HOME/.zshrc"
+      echo "# iTerm2 shell integration" >> "$HOME/.zshrc"
+      echo "test -e \"\${HOME}/.iterm2_shell_integration.zsh\" && source \"\${HOME}/.iterm2_shell_integration.zsh\"" >> "$HOME/.zshrc"
+      info "Added shell integration to .zshrc"
+    fi
+  else
+    success "Shell integration already installed"
+  fi
+}
+
+# Verify installation
+verify_installation() {
+  info "Verifying iTerm2 setup..."
+
+  local issues=0
+
+  # Check if iTerm2 app exists
+  if [ ! -d "$ITERM_APP" ]; then
+    error "iTerm2 application not found"
+    ((issues++))
+  else
+    success "iTerm2 application: ✓"
+  fi
+
+  # Check if configuration exists
+  if [ ! -f "$ITERM_PLIST" ]; then
+    error "iTerm2 configuration not found"
+    ((issues++))
+  else
+    success "iTerm2 configuration: ✓"
+  fi
+
+  # Check shell integration
+  if [ -f "$HOME/.iterm2_shell_integration.zsh" ]; then
+    success "Shell integration: ✓"
+  else
+    warning "Shell integration: ⚠ (optional)"
+  fi
+
+  return $issues
+}
+
+# Show configuration summary
+show_summary() {
+  echo
+  echo "📊 iTerm2 Configuration Summary:"
+  echo "================================"
+
+  if [ -f "$DOTFILES_ITERM_CONFIG" ]; then
+    local iterm_version=$(defaults read "$DOTFILES_ITERM_CONFIG" "iTerm Version" 2>/dev/null || echo "Unknown")
+    local profiles_count=$(defaults read "$DOTFILES_ITERM_CONFIG" "New Bookmarks" 2>/dev/null | grep -c "Guid" || echo "Unknown")
+
+    echo "• Configuration source: dotfiles"
+    echo "• iTerm2 version: $iterm_version"
+    echo "• Profiles configured: $profiles_count"
+    echo "• Shell integration: $([ -f "$HOME/.iterm2_shell_integration.zsh" ] && echo "Enabled" || echo "Disabled")"
+  fi
+
+  echo
+  echo "📂 File locations:"
+  echo "• Configuration: $ITERM_PLIST"
+  echo "• Shell integration: $HOME/.iterm2_shell_integration.zsh"
+  echo "• Dynamic profiles: $HOME/Library/Application Support/iTerm2/DynamicProfiles/"
+}
+
+# Main setup function
+main() {
+  echo "🖥️  iTerm2 Setup & Configuration"
+  echo "==============================="
+
+  check_macos
+  install_iterm2
+  check_iterm_running
+  backup_existing_config
+  restore_configuration
+  configure_dynamic_profiles
+  install_shell_integration
+
+  if verify_installation; then
+    show_summary
+
+    echo
+    success "✅ iTerm2 setup complete!"
+    echo
+    echo "🚀 Next steps:"
+    echo "• Open iTerm2 to see your restored configuration"
+    echo "• Check that your profiles and color schemes are loaded"
+    echo "• Shell integration will be active in new terminal sessions"
+    echo
+    echo "💡 Tips:"
+    echo "• Use 'export-iterm2-config' to update your dotfiles when you make changes"
+    echo "• Your configuration is now version-controlled with your dotfiles"
+
+    # Offer to open iTerm2
+    read -p "Open iTerm2 now? (Y/n): " open_iterm
+    if [[ ! "$open_iterm" =~ ^[Nn]$ ]]; then
+      open -a iTerm
+    fi
+  else
+    error "Setup completed with issues. Please check the output above."
+    exit 1
+  fi
+}
+
+# Run if script is executed directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi

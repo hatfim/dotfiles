@@ -1,0 +1,96 @@
+[
+  // React Development Specific Keybindings
+  {
+    "key": "cmd+shift+r",
+    "command": "workbench.action.tasks.runTask",
+    "args": "npm: dev"
+  },
+  {
+    "key": "cmd+shift+b",
+    "command": "workbench.action.tasks.runTask",
+    "args": "npm: build"
+  },
+  {
+    "key": "cmd+shift+t",
+    "command": "workbench.action.tasks.runTask",
+    "args": "npm: test"
+  },
+
+  // Quick File Navigation
+  {
+    "key": "cmd+p",
+    "command": "workbench.action.quickOpen"
+  },
+  {
+    "key": "cmd+shift+p",
+    "command": "workbench.action.showCommands"
+  },
+
+  // Code Actions
+  {
+    "key": "cmd+.",
+    "command": "editor.action.quickFix"
+  },
+  {
+    "key": "shift+alt+f",
+    "command": "editor.action.formatDocument"
+  },
+
+  // Terminal
+  {
+    "key": "cmd+shift+`",
+    "command": "workbench.action.terminal.new"
+  },
+  {
+    "key": "cmd+`",
+    "command": "workbench.action.terminal.toggleTerminal"
+  },
+
+  // Split Editor
+  {
+    "key": "cmd+\\",
+    "command": "workbench.action.splitEditor"
+  },
+  {
+    "key": "cmd+shift+\\",
+    "command": "workbench.action.splitEditorDown"
+  },
+
+  // React Snippets
+  {
+    "key": "cmd+shift+c",
+    "command": "editor.action.insertSnippet",
+    "args": {
+      "name": "reactFunctionalComponent"
+    },
+    "when": "editorTextFocus && editorLangId == 'typescriptreact'"
+  },
+
+  // Git Actions
+  {
+    "key": "cmd+shift+g",
+    "command": "workbench.view.scm"
+  },
+
+  // Search and Replace
+  {
+    "key": "cmd+f",
+    "command": "actions.find"
+  },
+  {
+    "key": "cmd+shift+f",
+    "command": "workbench.action.findInFiles"
+  },
+
+  // Toggle Sidebar
+  {
+    "key": "cmd+b",
+    "command": "workbench.action.toggleSidebarVisibility"
+  },
+
+  // Close Tab
+  {
+    "key": "cmd+w",
+    "command": "workbench.action.closeActiveEditor"
+  }
+]

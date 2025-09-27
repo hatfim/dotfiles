@@ -1,0 +1,215 @@
+#!/usr/bin/env bash
+
+# Setup Git Hooks for Commitlint
+# Configures commit-msg hook to validate conventional commits
+
+set -euo pipefail
+
+# Colors
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+info() { echo -e "${BLUE}[INFO]${NC} $*"; }
+success() { echo -e "${GREEN}[SUCCESS]${NC} $*"; }
+warning() { echo -e "${YELLOW}[WARNING]${NC} $*"; }
+error() { echo -e "${RED}[ERROR]${NC} $*"; }
+
+# Check if we're in a git repository
+check_git_repo() {
+  if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    error "Not in a git repository"
+    exit 1
+  fi
+}
+
+# Install commitlint if not available
+install_commitlint() {
+  if ! command -v commitlint >/dev/null 2>&1; then
+    info "Installing @commitlint/cli and @commitlint/config-conventional..."
+
+    if [ -f "package.json" ]; then
+      # Project has package.json, install locally
+      npm install --save-dev @commitlint/cli @commitlint/config-conventional
+    else
+      # No package.json, install globally
+      npm install -g @commitlint/cli @commitlint/config-conventional
+    fi
+
+    success "Commitlint installed successfully"
+  else
+    success "Commitlint already available"
+  fi
+}
+
+# Create commit-msg hook
+create_commit_msg_hook() {
+  local hooks_dir=".git/hooks"
+  local hook_file="$hooks_dir/commit-msg"
+
+  # Create hooks directory if it doesn't exist
+  mkdir -p "$hooks_dir"
+
+  # Create commit-msg hook
+  cat > "$hook_file" <<'EOF'
+#!/usr/bin/env bash
+
+# Commit message validation hook
+# Validates commit messages using commitlint
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+# Get commit message file
+COMMIT_MSG_FILE="$1"
+
+# Check if commitlint is available
+if command -v commitlint >/dev/null 2>&1; then
+  # Use global commitlint config if available
+  if [ -f "$HOME/.config/commitlint/commitlint.config.js" ]; then
+    commitlint --config "$HOME/.config/commitlint/commitlint.config.js" --edit "$COMMIT_MSG_FILE"
+  elif [ -f "commitlint.config.js" ]; then
+    # Use project-specific config
+    commitlint --edit "$COMMIT_MSG_FILE"
+  else
+    # Use default conventional config
+    commitlint --config @commitlint/config-conventional --edit "$COMMIT_MSG_FILE"
+  fi
+
+  if [ $? -ne 0 ]; then
+    echo
+    echo -e "${RED}❌ Commit message validation failed!${NC}"
+    echo
+    echo -e "${YELLOW}💡 Commit message should follow conventional commit format:${NC}"
+    echo -e "${YELLOW}   type(scope): description${NC}"
+    echo
+    echo -e "${YELLOW}Examples:${NC}"
+    echo -e "${YELLOW}   feat(auth): add login validation${NC}"
+    echo -e "${YELLOW}   fix(ui): resolve button alignment issue${NC}"
+    echo -e "${YELLOW}   docs(readme): update installation instructions${NC}"
+    echo
+    echo -e "${YELLOW}💡 Use 'git commit --interactive' for guided commit creation${NC}"
+    echo
+    exit 1
+  fi
+else
+  echo -e "${YELLOW}⚠️  Commitlint not found - skipping validation${NC}"
+fi
+
+exit 0
+EOF
+
+  # Make hook executable
+  chmod +x "$hook_file"
+  success "Created commit-msg hook"
+}
+
+# Create prepare-commit-msg hook for template
+create_prepare_commit_msg_hook() {
+  local hooks_dir=".git/hooks"
+  local hook_file="$hooks_dir/prepare-commit-msg"
+
+  cat > "$hook_file" <<'EOF'
+#!/usr/bin/env bash
+
+# Prepare commit message hook
+# Loads commit message template if no message provided
+
+COMMIT_MSG_FILE="$1"
+COMMIT_SOURCE="$2"
+
+# Only add template for regular commits (not merges, amendments, etc.)
+if [ "$COMMIT_SOURCE" = "" ] || [ "$COMMIT_SOURCE" = "template" ]; then
+  # Check if global git message template exists
+  if [ -f "$HOME/.gitmessage" ]; then
+    # Only add template if commit message is empty or just has comments
+    if [ ! -s "$COMMIT_MSG_FILE" ] || ! grep -qv "^#" "$COMMIT_MSG_FILE"; then
+      cat "$HOME/.gitmessage" > "$COMMIT_MSG_FILE"
+    fi
+  fi
+fi
+EOF
+
+  chmod +x "$hook_file"
+  success "Created prepare-commit-msg hook"
+}
+
+# Configure git to use global commit template
+configure_git_template() {
+  if [ -f "$HOME/.gitmessage" ]; then
+    git config --global commit.template "$HOME/.gitmessage"
+    success "Configured global git commit template"
+  fi
+}
+
+# Setup function for global configuration
+setup_global() {
+  info "Setting up global git hooks configuration..."
+
+  # Configure git template directory
+  local git_template_dir="$HOME/.git-templates"
+  mkdir -p "$git_template_dir/hooks"
+
+  git config --global init.templateDir "$git_template_dir"
+
+  # Copy hooks to template directory
+  cp "$DOTFILES/scripts/setup-git-hooks" "$git_template_dir/hooks/"
+
+  # Create a hook installer script
+  cat > "$git_template_dir/hooks/install-commitlint" <<'EOF'
+#!/usr/bin/env bash
+# Run this in any git repository to install commitlint hooks
+bash "$HOME/.git-templates/hooks/setup-git-hooks"
+EOF
+
+  chmod +x "$git_template_dir/hooks/install-commitlint"
+
+  success "Global git hooks template configured"
+  info "New repositories will automatically include commitlint hooks"
+  info "For existing repositories, run: git init (to apply template)"
+}
+
+# Main function
+main() {
+  local mode="${1:-local}"
+
+  echo "🔗 Git Hooks Setup for Commitlint"
+  echo "================================="
+
+  if [ "$mode" = "global" ]; then
+    setup_global
+    return 0
+  fi
+
+  check_git_repo
+  install_commitlint
+  create_commit_msg_hook
+  create_prepare_commit_msg_hook
+  configure_git_template
+
+  success "✅ Git hooks setup complete!"
+  echo
+  echo "📝 What was configured:"
+  echo "• commit-msg hook: Validates commit messages with commitlint"
+  echo "• prepare-commit-msg hook: Loads commit template"
+  echo "• Global commit template: $HOME/.gitmessage"
+  echo
+  echo "🎯 Usage:"
+  echo "• git commit                    - Regular commit with validation"
+  echo "• git commit --interactive      - Interactive commit creation"
+  echo "• git cz                        - Commitizen interactive mode"
+  echo
+  echo "🔧 Configuration:"
+  echo "• Global config: $HOME/.config/commitlint/commitlint.config.js"
+  echo "• Project config: ./commitlint.config.js (if exists)"
+}
+
+# Run if script is executed directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  main "$@"
+fi
