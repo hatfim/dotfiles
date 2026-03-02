@@ -159,22 +159,19 @@ if [[ -f "$HOME/.zshlocal" ]]; then
   source "$HOME/.zshlocal"
 fi
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+# Claude CLI
+# if [ -f "$HOME/.claude/local/claude" ]; then
+#   alias claude="$HOME/.claude/local/claude"
+# fi
+
+
 # ------------------------------------------------------------------------------
 
 # Starship prompt
 # https://starship.rs/
 #
 eval "$(starship init zsh)"
-
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# Added by Windsurf
-_extend_path "$HOME/.codeium/windsurf/bin"
-
-# Claude CLI
-if [ -f "$HOME/.claude/local/claude" ]; then
-  alias claude="$HOME/.claude/local/claude"
-fi

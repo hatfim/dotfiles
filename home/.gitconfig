@@ -11,7 +11,7 @@
   new = green bold
 
 [core]
-  editor = vim
+  editor = code
   excludesfile = ~/.gitignore
   attributesfile = ~/.gitattributes
   ignorecase = false
@@ -109,10 +109,12 @@
 [include]
   path = ~/.gitlocal
 [user]
-	name = Hatfim Ydniw
+	name = hatfim
 	email = hatfim.ydniw@gmail.com
-	signingkey = 1722BD1854910109
-[commit]
-	gpgsign = true
+  signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINWlFFBDpDpK8mTHd4ebzm1xBXLWZ4W2I7s6L2DBpnj9
 [gpg]
-	program = /usr/local/MacGPG2/bin/gpg2
+  format = ssh
+[gpg "ssh"]
+  program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+[commit]
+  gpgsign = true

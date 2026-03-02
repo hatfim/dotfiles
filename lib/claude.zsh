@@ -15,7 +15,7 @@ _exists() {
 # Basic Claude commands
 alias c='claude'
 alias cc='claude chat'
-alias cd='claude docs'
+# alias cd='claude docs'
 alias cv='claude validate'
 alias cs='claude status'
 

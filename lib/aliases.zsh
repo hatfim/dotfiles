@@ -32,7 +32,7 @@ alias q="~ && clear"
 [ -d ~/Dev/Playground ]       && alias dvp='cd ~/Dev/Playground'
 [ -d ~/Dev/Repos ]            && alias dvr='cd ~/Dev/Repos'
 [ -d ~/Dev/Wordpress ]        && alias dvw='cd ~/Dev/Wordpress'
-[ -d ~/Dev/monit ]            && alias dvw='cd ~/Dev/monit'
+[ -d ~/Dev/monit ]            && alias dvm='cd ~/Dev/monit'
 
 # Commands Shortcuts
 alias e="$EDITOR"

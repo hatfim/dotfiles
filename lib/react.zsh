@@ -26,16 +26,16 @@ alias cna-ts='create-next-app --typescript'
 # =============================================================================
 
 # Start development servers
-alias dev='npm run dev'
-alias start='npm start'
-alias build='npm run build'
-alias test='npm test'
-alias lint='npm run lint'
-alias lintfix='npm run lint -- --fix'
+# alias dev='npm run dev'
+# alias start='npm start'
+# alias build='npm run build'
+# alias test='npm test'
+# alias lint='npm run lint'
+# alias lintfix='npm run lint -- --fix'
 
-# Alternative dev commands
-alias serve-static='serve -s build'
-alias serve-dev='live-server --port=3000'
+# # Alternative dev commands
+# alias serve-static='serve -s build'
+# alias serve-dev='live-server --port=3000'
 
 # =============================================================================
 # PACKAGE MANAGEMENT ALIASES
